@@ -1,6 +1,10 @@
+from typing import TYPE_CHECKING
+
 from django.db import models
 from .base import TenantModel
 
+if TYPE_CHECKING:
+    from core.models.domain import Domain
 
 class Website(TenantModel):
     
@@ -16,5 +20,7 @@ class Website(TenantModel):
     name = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
     
+    
+    domains: "models.Manager[Domain]"
     def __str__(self):
         return f"{self.name} ({self.type})"
