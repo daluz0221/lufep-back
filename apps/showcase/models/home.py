@@ -20,9 +20,11 @@ class BaseSection(models.Model):
 
 class HeroSection(BaseSection):
     headline = models.CharField(max_length=250, blank=True, null=True)
+    highlight_word = models.CharField(max_length=150, blank=True, null=True)
     subheadline = models.CharField(max_length=450, blank=True, null=True)
     
     imageUrl = models.CharField()
+    imageAlt = models.CharField(default="")
     textCta = models.CharField(max_length=200)
     urlCta = models.CharField(max_length=250)
     
@@ -33,8 +35,10 @@ class HeroSection(BaseSection):
     def to_dict(self):
         return {
             "headline": self.headline,
+            "highlightWord": self.highlight_word,
             "subheadline": self.subheadline,
             "imageUrl": self.imageUrl,
+            "imageAlt": self.imageAlt,
             "textCta": self.textCta,
             "urlCta": self.urlCta
         }
@@ -47,6 +51,7 @@ class HeroSection(BaseSection):
 class BenefitsSection(BaseSection):
 
     title = models.CharField(max_length=200, default="¿Por qué elegirnos?")
+    subtitle = models.CharField(max_length=250, blank=True, null=True)
     
     benefits: "RelatedManager[Benefit]"
     
@@ -57,6 +62,7 @@ class BenefitsSection(BaseSection):
     def to_dict(self):
         return {
             "title": self.title,
+            "subtitle": self.subtitle,
             "items": [
                 benefit.to_dict()
                 for benefit in self.benefits.all().order_by("order")
@@ -73,19 +79,23 @@ class Benefit(models.Model):
     
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=200)
+    icon = models.CharField(max_length=50, blank=True, null=True)
     
     order = models.PositiveIntegerField(default=0)
     
     def to_dict(self):
         return {
             "title": self.title,
-            "description": self.description
+            "description": self.description,
+            "icon": self.icon
         }
     
     
 class ServiceSection(BaseSection):
     
     title = models.CharField(max_length=200, default="Servicios")
+    subtitle = models.CharField(max_length=250, blank=True, null=True)
+    url = models.CharField(default="")
     
     servicios: "RelatedManager[Service]"
     
@@ -96,6 +106,8 @@ class ServiceSection(BaseSection):
     def to_dict(self):
         return {
             "title": self.title,
+            "subtitle": self.subtitle,
+            "url": self.url,
             "items": [
                 service.to_dict()
                 for service in self.servicios.all().order_by("order")
@@ -111,7 +123,10 @@ class Service(models.Model):
     section = models.ForeignKey(ServiceSection, on_delete=models.CASCADE, related_name="servicios")
     
     name = models.CharField(max_length=150)
-    tagline = models.CharField(max_length=250)
+    short_description = models.CharField(max_length=250)
+    description = models.TextField()
+    image = models.CharField(blank=True, null=True)
+    url_text = models.CharField(max_length=150,blank=True, null=True)
     ur = models.CharField(max_length=255)
     
     order = models.PositiveIntegerField(default=0)
@@ -119,7 +134,10 @@ class Service(models.Model):
     def to_dict(self):
         return {
             "name": self.name,
-            "tagline": self.tagline,
+            "shortDescription": self.short_description,
+            "description": self.description,
+            "image": self.image,
+            "urlText": self.url_text,
             "url": self.ur
         }
     
@@ -160,25 +178,52 @@ class HowItWorksStep(models.Model):
     
 class AboutSection(BaseSection):
     
+    title = models.CharField(default="")
     text = models.TextField(max_length=500)
     cta_text = models.CharField(max_length=100)
     cta_url = models.CharField(max_length=255)
+    
+    metrics: "RelatedManager[AboutMetric]"
 
     def __str__(self):
         return f"About Teaser | {self.website.name}"
     
     def to_dict(self):
         return {
+            "title": self.title,
             "text": self.text,
             "ctaText": self.cta_text,
-            "ctaUrl": self.cta_url
+            "ctaUrl": self.cta_url,
+            "items": [
+                metric.to_dict()
+                for metric in self.metrics.all().order_by("order")
+            ]
         }
     
     class Meta(BaseSection.Meta):
         verbose_name = "Home - about Section"
         verbose_name_plural = "Home - about Section"
     
+
+class AboutMetric(models.Model):
     
+    section = models.ForeignKey(AboutSection, on_delete=models.CASCADE, related_name="metrics")
+    
+    metric = models.CharField(max_length=150, default="")
+    text = models.CharField(max_length=250, default="")
+    
+    order = models.PositiveIntegerField(default=0)
+    
+    def __str__(self):
+        return f"{self.metric}"
+    
+    def to_dict(self):
+        return {
+            "metrica": self.metric,
+            "text": self.text
+        }
+
+
 class TestimonialSection(BaseSection):
     title = models.CharField(
         max_length=200,
@@ -186,13 +231,17 @@ class TestimonialSection(BaseSection):
     )
     
     testimonials: "RelatedManager[Testimonial]"
-    
+    metrics: "RelatedManager[TertimonialMetric]"
     def to_dict(self):
         return {
             "title": self.title,
-            "items": [
+            "testimonios": [
                 testimonial.to_dict()
                 for testimonial in self.testimonials.all().order_by("order")
+            ],
+            "metricas": [
+                metric.to_dict()
+                for metric in self.metrics.all().order_by("order")
             ]
         }
     
@@ -211,6 +260,7 @@ class Testimonial(models.Model):
     author = models.CharField(max_length=150)
     role = models.CharField(max_length=150, blank=True)
     content = models.TextField(max_length=500)
+    rating = models.PositiveIntegerField(default=3)
 
     order = models.PositiveIntegerField(default=0)
     
@@ -221,8 +271,28 @@ class Testimonial(models.Model):
             "content": self.content
         }
     
+
+class TertimonialMetric(models.Model):
+    section = models.ForeignKey(
+        TestimonialSection,
+        on_delete=models.CASCADE,
+        related_name="metrics"
+    )    
+    
+    metric = models.CharField(default="", max_length=150)
+    text = models.CharField(default="", max_length=150)
+    
+    order = models.PositiveIntegerField(default=0)
+    
+    def to_dict(self):
+        return {
+            "metrica": self.metric,
+            "text": self.text
+        }
+    
 class FinalCTASection(BaseSection):
     headline = models.CharField(max_length=200)
+    subheadline = models.CharField(max_length=250)
     button_text = models.CharField(max_length=100)
     button_url = models.CharField(max_length=255)
 
@@ -232,6 +302,7 @@ class FinalCTASection(BaseSection):
     def to_dict(self):
         return {
             "headline": self.headline,
+            "subheadline": self.subheadline,
             "buttonText": self.button_text,
             "buttonUrl": self.button_url
         }

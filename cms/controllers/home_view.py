@@ -12,3 +12,6 @@ class HomeView(View):
         data = HomePageService.get_data(website)
         
         return JsonResponse(data)
+    
+
+        
