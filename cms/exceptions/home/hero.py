@@ -1,0 +1,4 @@
+
+
+class HeroNotFound(Exception):
+    pass

@@ -34,6 +34,7 @@ class HeroSection(BaseSection):
     
     def to_dict(self):
         return {
+            "id": self.pk,
             "headline": self.headline,
             "highlightWord": self.highlight_word,
             "subheadline": self.subheadline,
