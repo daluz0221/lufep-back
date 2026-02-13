@@ -13,6 +13,9 @@ from .models.user import User
 from .services.throttles import LoginRateThrottle
 
 
+class AdminView(APIView):
+    permission_classes = [IsAuthenticated]
+
 
 class LoginAPIView(APIView):
     
