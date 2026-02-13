@@ -31,7 +31,7 @@ class HomeHeroAdminView(View):
         return JsonResponse(data, status=201)
     
 @method_decorator(csrf_exempt, name="dispatch")
-class HomeHeroDetailView(View):
+class HomeHeroAdminDetailView(View):
     
     
     def put(self, request, id):
