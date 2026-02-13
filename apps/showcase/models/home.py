@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING
-from django.db import models
+from django.db import models, transaction
 from core.models import Website
 
 if TYPE_CHECKING:
@@ -23,7 +23,7 @@ class HeroSection(BaseSection):
     highlight_word = models.CharField(max_length=150, blank=True, null=True)
     subheadline = models.CharField(max_length=450, blank=True, null=True)
     
-    imageUrl = models.CharField()
+    imageUrl = models.CharField(max_length=500)
     imageAlt = models.CharField(default="")
     textCta = models.CharField(max_length=200)
     urlCta = models.CharField(max_length=250)
@@ -44,7 +44,6 @@ class HeroSection(BaseSection):
             "urlCta": self.urlCta
         }
         
-    
     class Meta(BaseSection.Meta):
         verbose_name = "Home - Hero Section"
         verbose_name_plural = "Home - Hero Section"
