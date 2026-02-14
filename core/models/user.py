@@ -52,6 +52,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         on_delete=models.CASCADE,
         related_name="users"
     )
+    must_change_password = models.BooleanField(default=True)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
