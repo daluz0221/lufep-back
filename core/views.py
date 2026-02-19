@@ -55,8 +55,7 @@ class LoginAPIView(APIView):
         if not isinstance(user, User):
             return Response({"Error": "Invalidad credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
-        print("******+++++++++++")
-        print(user)
+        
         refresh = RefreshToken.for_user(user)
         if user.must_change_password:
             return Response({
@@ -91,8 +90,7 @@ class ChangePasswordAPIView(APIView):
         user = authenticate(username=email, password=password)
         if not isinstance(user, User):
             return Response({"Error": "Invalidad credentials"}, status=status.HTTP_400_BAD_REQUEST)
-        print("=================")
-        print(user)
+        
         new_password = request.data.get("new_password")
         
         

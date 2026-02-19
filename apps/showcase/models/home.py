@@ -10,7 +10,7 @@ class BaseSection(models.Model):
     website = models.ForeignKey(Website, on_delete=models.CASCADE)
 
 
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     order = models.PositiveIntegerField(default=0)
 
     class Meta:
@@ -61,6 +61,7 @@ class BenefitsSection(BaseSection):
     
     def to_dict(self):
         return {
+            "id": self.pk,
             "title": self.title,
             "subtitle": self.subtitle,
             "items": [
