@@ -1,7 +1,8 @@
-from apps.showcase.models import ServiceSection
+from django.db import transaction
 
+from apps.showcase.models import ServiceSection, Service
 
-
+from ....serializers.home.services import SerivceSectionSerializer
 
 class ServiceSectionService:
     
@@ -17,3 +18,25 @@ class ServiceSectionService:
         )
         
         return section.to_dict() if section else None
+    
+    
+    
+    
+    @staticmethod
+    def create_section(website, data):
+        with transaction.atomic():
+            
+            services_data = data.pop("servicios", [])
+            
+            if data.get("is_active"):
+                ServiceSection.objects.filter(website=website, is_active=True).update(is_active=False)
+            
+            section = ServiceSection.objects.create(website=website, **data)
+            
+            for service_data in services_data:
+                Service.objects.create(
+                    section=section,
+                    **service_data
+                )            
+                
+            return section

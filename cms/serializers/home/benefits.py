@@ -28,6 +28,7 @@ class BenefitsSectionSerializer(serializers.ModelSerializer):
             "subtitle",
             "benefits",
             "is_active",
+            "order"
         ]
         
    

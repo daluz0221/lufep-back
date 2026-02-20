@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.views import APIView
+
 
 from core.views import AdminView
 
@@ -9,7 +9,7 @@ from ....services.sections.home.benefits import BenefitsService
 from ....serializers.home.benefits import BenefitsSectionSerializer
 
 
-class HomeBenefitsAdminView(APIView):
+class HomeBenefitsAdminView(AdminView):
     
     
     def post(self, request):
@@ -32,7 +32,7 @@ class HomeBenefitsAdminView(APIView):
     
     
     
-class HomeBenefitsAdminDetailView(APIView):
+class HomeBenefitsAdminDetailView(AdminView):
     
     
     def get(self, request, id):
@@ -57,5 +57,15 @@ class HomeBenefitsAdminDetailView(APIView):
                 return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+    def delete(self, request, id):
+        website = request.context.get("website")
+        
+        try:
+            BenefitsService.delete_section(website, id)
+            return Response({}, status=status.HTTP_200_OK)
+        except Exception:
+            return Response({"error": "BenefitSection not found"}, status=status.HTTP_404_NOT_FOUND)
 
             

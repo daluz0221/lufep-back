@@ -65,7 +65,7 @@ class BenefitsService:
             )
             
             with transaction.atomic():
-                benefits_data = data.pop("benefits", [])
+                benefits_data = data.pop("benefits", None)
           
                 
                 if data.get("is_active"):
@@ -85,9 +85,7 @@ class BenefitsService:
                 
                 
                 existing_benefits = {benefit.pk: benefit for benefit in section_to_update.benefits.all()}
-                for x in existing_benefits:
-                    print("**")
-                    print(x)
+          
                 sent_ids = []
                 
                 for benefit_data in benefits_data:
@@ -113,10 +111,12 @@ class BenefitsService:
                         sent_ids.append(new_benefit.pk)
                 
                 #DELETE los que no vengan
-                for benefit_id, benefit in existing_benefits.items():
-                    if benefit_id not in sent_ids:
-                        benefit.delete()
-                
+                # for benefit_id, benefit in existing_benefits.items():
+                #     if benefit_id not in sent_ids:
+                #         benefit.delete()
+                Benefit.objects.filter(
+                    section=section_to_update
+                ).exclude(id__in=sent_ids).delete()
                 
                         
                 return section_to_update
@@ -126,3 +126,16 @@ class BenefitsService:
         except BenefitsSection.DoesNotExist:
          
             raise Exception( f"Hero with ud {id} not found")
+        
+        
+    @staticmethod
+    def delete_section(website, instance_id):
+        try:
+            section = BenefitsSection.objects.get(
+                website=website,
+                id=instance_id
+            )
+            section.delete()
+        except BenefitsSection.DoesNotExist:
+            raise Exception("Section not found")
+            
