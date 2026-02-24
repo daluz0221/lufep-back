@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib import admin #type: ignore
 from apps.showcase.models import (
     HeroSection,
     BenefitsSection,
@@ -7,7 +7,8 @@ from apps.showcase.models import (
     Service,
     HowItWorksSection,
     HowItWorksStep,
-    AboutSection, 
+    AboutSection,
+    AboutMetric,
     Testimonial,
     TestimonialSection,
     FinalCTASection
@@ -18,15 +19,17 @@ from apps.showcase.models import (
 class HeroSectionAdmin(admin.ModelAdmin):
     
     list_display = (
+        "id",
         "website",
         "headline",
         "subheadline",
         "textCta",
         "imageUrl",
-        "is_active"
+        "is_active",
+        "is_deleted",
     )
-    
-    list_filter = ("is_active", "website")
+    list_editable = ("is_active", "is_deleted")
+    list_filter = ("is_active", "is_deleted", "website")
     search_fields = ("name", "website", "order")
     
 class BenefitInline(admin.TabularInline):
@@ -37,8 +40,9 @@ class BenefitInline(admin.TabularInline):
 
 @admin.register(BenefitsSection)
 class BenefitSectionAdmin(admin.ModelAdmin):
-    list_display = ("website", "title", "is_active", "order")
-    list_filter = ("website", "is_active")
+    list_display = ("id", "website", "title", "is_active", "is_deleted", "order")
+    list_editable = ("is_active", "is_deleted")
+    list_filter = ("website", "is_active", "is_deleted")
     inlines = [BenefitInline]
     
     
@@ -50,8 +54,9 @@ class ServiceInline(admin.TabularInline):
 
 @admin.register(ServiceSection)
 class ServiceSectionAdmin(admin.ModelAdmin):
-    list_display = ("website", "title", "is_active", "order")
-    list_filter = ("website", "is_active")
+    list_display = ("id", "website", "title", "is_active", "is_deleted", "order")
+    list_editable = ("is_active", "is_deleted")
+    list_filter = ("website", "is_active", "is_deleted")
     inlines = [ServiceInline]
     
     
@@ -63,15 +68,24 @@ class HowItWorksStepInline(admin.TabularInline):
 
 @admin.register(HowItWorksSection)
 class HowItWorksAdmin(admin.ModelAdmin):
-    list_display = ("website", "title", "is_active", "order")
-    list_filter = ("website", "is_active")
+    list_display = ("id", "website", "title", "is_active", "is_deleted", "order")
+    list_editable = ("is_active", "is_deleted")
+    list_filter = ("website", "is_active", "is_deleted")
     inlines = [HowItWorksStepInline]
     
     
+class AboutMetricInline(admin.TabularInline):
+    model = AboutMetric
+    extra = 1
+    ordering = ("order",)
+
+
 @admin.register(AboutSection)
 class AboutSectionAdmin(admin.ModelAdmin):
-    list_display = ("website", "is_active", "order")
-    list_filter = ("website", "is_active")
+    list_display = ("id", "website", "title", "is_active", "is_deleted", "order")
+    list_editable = ("is_active", "is_deleted")
+    list_filter = ("website", "is_active", "is_deleted")
+    inlines = [AboutMetricInline]
     
     
 class TestimonialInline(admin.TabularInline):
@@ -82,12 +96,14 @@ class TestimonialInline(admin.TabularInline):
 
 @admin.register(TestimonialSection)
 class TestimonialSectionAdmin(admin.ModelAdmin):
-    list_display = ("website", "title", "is_active", "order")
-    list_filter = ("website", "is_active")
+    list_display = ("id", "website", "title", "is_active", "is_deleted", "order")
+    list_editable = ("is_active", "is_deleted")
+    list_filter = ("website", "is_active", "is_deleted")
     inlines = [TestimonialInline]
     
     
 @admin.register(FinalCTASection)
 class FinalCTAAdmin(admin.ModelAdmin):
-    list_display = ("website", "headline", "is_active", "order")
-    list_filter = ("website", "is_active")
+    list_display = ("id", "website", "headline", "is_active", "is_deleted", "order")
+    list_editable = ("is_active", "is_deleted")
+    list_filter = ("website", "is_active", "is_deleted")

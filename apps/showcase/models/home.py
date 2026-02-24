@@ -1,17 +1,17 @@
 from typing import TYPE_CHECKING
-from django.db import models, transaction
+from django.db import models #type: ignore
 from core.models import Website
 
 if TYPE_CHECKING:
-    from django.db.models.manager import RelatedManager
+    from django.db.models.manager import RelatedManager #type: ignore
 class BaseSection(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     website = models.ForeignKey(Website, on_delete=models.CASCADE)
 
-
     is_active = models.BooleanField(default=False)
     order = models.PositiveIntegerField(default=0)
+    is_deleted = models.BooleanField(default=False)  # borrado lógico: True = el front lo eliminó, no se sirve al front
 
     class Meta:
         abstract = True
@@ -66,7 +66,7 @@ class BenefitsSection(BaseSection):
             "subtitle": self.subtitle,
             "items": [
                 benefit.to_dict()
-                for benefit in self.benefits.all().order_by("order")
+                for benefit in self.benefits.filter(is_deleted=False).order_by("order")
             ]
         }
     
@@ -81,8 +81,8 @@ class Benefit(models.Model):
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=200)
     icon = models.CharField(max_length=50, blank=True, null=True)
-    
     order = models.PositiveIntegerField(default=0)
+    is_deleted = models.BooleanField(default=False)
     
     def to_dict(self):
         return {
@@ -111,7 +111,7 @@ class ServiceSection(BaseSection):
             "url": self.url,
             "items": [
                 service.to_dict()
-                for service in self.servicios.all().order_by("order")
+                for service in self.servicios.filter(is_deleted=False).order_by("order")
             ]
         }
     
@@ -129,8 +129,8 @@ class Service(models.Model):
     image = models.CharField(blank=True, null=True)
     url_text = models.CharField(max_length=150,blank=True, null=True)
     ur = models.CharField(max_length=255)
-    
     order = models.PositiveIntegerField(default=0)
+    is_deleted = models.BooleanField(default=False)
     
     def to_dict(self):
         return {
@@ -150,10 +150,11 @@ class HowItWorksSection(BaseSection):
     
     def to_dict(self):
         return {
+            "id": self.pk,
             "title": self.title,
             "items": [
                 step.to_dict()
-                for step in self.steps.all().order_by("order")
+                for step in self.steps.filter(is_deleted=False).order_by("order")
             ]
         }
     
@@ -169,9 +170,11 @@ class HowItWorksStep(models.Model):
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=200)
     order = models.PositiveIntegerField(default=0)
+    is_deleted = models.BooleanField(default=False)
     
     def to_dict(self):
         return {
+            "id": self.pk,
             "title": self.title,
             "description": self.description
         }
@@ -197,7 +200,7 @@ class AboutSection(BaseSection):
             "ctaUrl": self.cta_url,
             "items": [
                 metric.to_dict()
-                for metric in self.metrics.all().order_by("order")
+                for metric in self.metrics.filter(is_deleted=False).order_by("order")
             ]
         }
     
@@ -212,8 +215,8 @@ class AboutMetric(models.Model):
     
     metric = models.CharField(max_length=150, default="")
     text = models.CharField(max_length=250, default="")
-    
     order = models.PositiveIntegerField(default=0)
+    is_deleted = models.BooleanField(default=False)
     
     def __str__(self):
         return f"{self.metric}"
@@ -238,11 +241,11 @@ class TestimonialSection(BaseSection):
             "title": self.title,
             "testimonios": [
                 testimonial.to_dict()
-                for testimonial in self.testimonials.all().order_by("order")
+                for testimonial in self.testimonials.filter(is_deleted=False).order_by("order")
             ],
             "metricas": [
                 metric.to_dict()
-                for metric in self.metrics.all().order_by("order")
+                for metric in self.metrics.filter(is_deleted=False).order_by("order")
             ]
         }
     
@@ -257,13 +260,12 @@ class Testimonial(models.Model):
         on_delete=models.CASCADE,
         related_name="testimonials"
     )
-
     author = models.CharField(max_length=150)
     role = models.CharField(max_length=150, blank=True)
     content = models.TextField(max_length=500)
     rating = models.PositiveIntegerField(default=3)
-
     order = models.PositiveIntegerField(default=0)
+    is_deleted = models.BooleanField(default=False)
     
     def to_dict(self):
         return {
@@ -278,12 +280,11 @@ class TertimonialMetric(models.Model):
         TestimonialSection,
         on_delete=models.CASCADE,
         related_name="metrics"
-    )    
-    
+    )
     metric = models.CharField(default="", max_length=150)
     text = models.CharField(default="", max_length=150)
-    
     order = models.PositiveIntegerField(default=0)
+    is_deleted = models.BooleanField(default=False)
     
     def to_dict(self):
         return {

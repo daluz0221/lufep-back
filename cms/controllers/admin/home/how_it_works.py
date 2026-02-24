@@ -1,54 +1,52 @@
 from rest_framework import status #type: ignore
 from rest_framework.response import Response #type: ignore
+from rest_framework.views import APIView #type: ignore
 
 
-from core.views import AdminView
+#from core.views import AdminView
+from ....services.sections.home.steps import StepsService
+from ....serializers.home.how_it_works import HowItWorksSectionSerializer, HowItWorksStepSerializer
 
-from ....services.sections.home.services import ServiceSectionService
-from ....serializers.home.services import SerivceSectionSerializer
 
 
-class HomeServicesAdminView(AdminView):
-    
+class HomeHowItWorksAdminView(APIView):
     
     def post(self, request):
         website = request.context.get("website")
-        payload = SerivceSectionSerializer(data=request.data)
+        payload = HowItWorksSectionSerializer(data=request.data)
         
         if payload.is_valid():
-            section = ServiceSectionService.create_section(website, payload.validated_data)
-            
-            return Response(SerivceSectionSerializer(section).data, status=status.HTTP_201_CREATED)
-        
+            section = StepsService.create_section(website, payload.validated_data)
+            return Response(HowItWorksSectionSerializer(section).data, status=status.HTTP_201_CREATED)
+         
         return Response(payload.errors, status=status.HTTP_400_BAD_REQUEST)
     
     
     def get(self, request):
         website = request.context.get("website")
-        data = ServiceSectionService.get_for_admin(website)
-        
+        data = StepsService.get_for_admin(website)
         return Response(data, status=status.HTTP_200_OK)
-
-
-class HomeServicesAdminDetailView(AdminView):
+    
+    
+class HomeHowItWorksAdminDetailView(APIView):
     
     def get(self, request, id):
         website = request.context.get("website")
         try:
-            data = ServiceSectionService.get_by_id(website, id)
+            data = StepsService.get_by_id(website, id)
             return Response(data, status=status.HTTP_302_FOUND)
         except Exception:
             return Response({}, status=status.HTTP_404_NOT_FOUND)
-
-
+    
+    
     def patch(self, request, id):
         website = request.context.get("website")
-        serializer = SerivceSectionSerializer(data=request.data, partial=True)
+        serializer = HowItWorksSectionSerializer(data=request.data, partial=True)
         
         if serializer.is_valid():
             try:
-                update_section = ServiceSectionService.update_section(website, id, serializer.validated_data)
-                return Response(SerivceSectionSerializer(update_section).data, status=status.HTTP_302_FOUND)
+                update_section = StepsService.update_section(website, id, serializer.validated_data)
+                return Response(HowItWorksSectionSerializer(update_section).data, status=status.HTTP_302_FOUND)
             except Exception:
                 return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -56,7 +54,7 @@ class HomeServicesAdminDetailView(AdminView):
     def delete(self, request, id):
         website = request.context.get("website")
         try:
-            ServiceSectionService.delete_section(website, id)
+            StepsService.delete_section(website, id)
             return Response({}, status=status.HTTP_200_OK)
         except Exception:
-            return Response({"error": "ServiceSection not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "HowItWorksSection not found"}, status=status.HTTP_404_NOT_FOUND)

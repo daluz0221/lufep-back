@@ -1,16 +1,16 @@
 from typing import Any
 
-from django.contrib.auth import authenticate
-from django.contrib.auth.models import AnonymousUser
-from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth import authenticate # type: ignore
+from django.contrib.auth.models import AnonymousUser # type: ignore
+from django.contrib.auth.password_validation import validate_password # type: ignore
 
-from rest_framework import status
-from rest_framework.request import Request
-from rest_framework.permissions import IsAuthenticated, BasePermission
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework import status # type: ignore
+from rest_framework.request import Request # type: ignore
+from rest_framework.permissions import IsAuthenticated, BasePermission # type: ignore
+from rest_framework.views import APIView # type: ignore
+from rest_framework.response import Response # type: ignore
+from rest_framework_simplejwt.tokens import RefreshToken # type: ignore
+from rest_framework_simplejwt.authentication import JWTAuthentication # type: ignore
 
 from .models.website import Website
 from .models.user import User
@@ -20,7 +20,7 @@ from .services.throttles import LoginRateThrottle
 class PasswordChangedPermission(BasePermission):
 
     def has_permission(self, request, view: any) -> bool:# type: ignore[override]
-        user = request.context.get("user")
+        user = request.user
 
         # Si no está autenticado, DRF lo bloquea antes
         if not user.is_authenticated:

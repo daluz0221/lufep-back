@@ -2,9 +2,9 @@
 
 
 
-from django.http import JsonResponse
-from rest_framework import status
-from rest_framework.response import Response
+from django.http import JsonResponse # type: ignore
+from rest_framework import status # type: ignore
+from rest_framework.response import Response # type: ignore
 
 from apps.showcase.models.home import HeroSection
 from core.views import AdminView
@@ -79,7 +79,7 @@ class HomeHeroAdminDetailView(AdminView):
                 status=status.HTTP_404_NOT_FOUND
             )
             
-        HeroSection.delete(hero)
+        HeroService.delete_hero(hero)
         return Response(status=status.HTTP_204_NO_CONTENT)
         
         
