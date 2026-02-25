@@ -8,8 +8,8 @@ from .home import (
     HowItWorksSection,
     HowItWorksStep,
     FinalCTASection,
-    Service,
-    ServiceSection,
+    Product,
+    ProductSection,
     Testimonial,
-    TestimonialSection
+    TestimonialSection,
 )

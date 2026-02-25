@@ -64,7 +64,7 @@ class BenefitsSection(BaseSection):
             "id": self.pk,
             "title": self.title,
             "subtitle": self.subtitle,
-            "items": [
+            "benefits": [
                 benefit.to_dict()
                 for benefit in self.benefits.filter(is_deleted=False).order_by("order")
             ]
@@ -92,46 +92,46 @@ class Benefit(models.Model):
         }
     
     
-class ServiceSection(BaseSection):
-    
-    title = models.CharField(max_length=200, default="Servicios")
+class ProductSection(BaseSection):
+
+    title = models.CharField(max_length=200, default="Productos")
     subtitle = models.CharField(max_length=250, blank=True, null=True)
     url = models.CharField(default="")
-    
-    servicios: "RelatedManager[Service]"
-    
-    
+
+    products: "RelatedManager[Product]"
+
+
     def __str__(self):
-        return f"Servicios home | {self.website.name}"
-    
+        return f"Products home | {self.website.name}"
+
     def to_dict(self):
         return {
             "title": self.title,
             "subtitle": self.subtitle,
             "url": self.url,
             "items": [
-                service.to_dict()
-                for service in self.servicios.filter(is_deleted=False).order_by("order")
+                product.to_dict()
+                for product in self.products.filter(is_deleted=False).order_by("order")
             ]
         }
-    
-    class Meta(BaseSection.Meta):
-        verbose_name = "Home - Services Section"
-        verbose_name_plural = "Home - Services Section"
 
-class Service(models.Model):
-    
-    section = models.ForeignKey(ServiceSection, on_delete=models.CASCADE, related_name="servicios")
-    
+    class Meta(BaseSection.Meta):
+        verbose_name = "Home - Products Section"
+        verbose_name_plural = "Home - Products Section"
+
+class Product(models.Model):
+
+    section = models.ForeignKey(ProductSection, on_delete=models.CASCADE, related_name="products")
+
     name = models.CharField(max_length=150)
     short_description = models.CharField(max_length=250)
     description = models.TextField()
     image = models.CharField(blank=True, null=True)
-    url_text = models.CharField(max_length=150,blank=True, null=True)
-    ur = models.CharField(max_length=255)
+    url_text = models.CharField(max_length=150, blank=True, null=True)
+    url = models.CharField(max_length=255)
     order = models.PositiveIntegerField(default=0)
     is_deleted = models.BooleanField(default=False)
-    
+
     def to_dict(self):
         return {
             "name": self.name,
@@ -139,7 +139,7 @@ class Service(models.Model):
             "description": self.description,
             "image": self.image,
             "urlText": self.url_text,
-            "url": self.ur
+            "url": self.url
         }
     
     
@@ -152,7 +152,7 @@ class HowItWorksSection(BaseSection):
         return {
             "id": self.pk,
             "title": self.title,
-            "items": [
+            "steps": [
                 step.to_dict()
                 for step in self.steps.filter(is_deleted=False).order_by("order")
             ]
@@ -196,9 +196,9 @@ class AboutSection(BaseSection):
         return {
             "title": self.title,
             "text": self.text,
-            "ctaText": self.cta_text,
-            "ctaUrl": self.cta_url,
-            "items": [
+            "urlText": self.cta_text,
+            "Url": self.cta_url,
+            "metricas": [
                 metric.to_dict()
                 for metric in self.metrics.filter(is_deleted=False).order_by("order")
             ]
@@ -239,11 +239,11 @@ class TestimonialSection(BaseSection):
     def to_dict(self):
         return {
             "title": self.title,
-            "testimonios": [
+            "testimonials": [
                 testimonial.to_dict()
                 for testimonial in self.testimonials.filter(is_deleted=False).order_by("order")
             ],
-            "metricas": [
+            "metrics": [
                 metric.to_dict()
                 for metric in self.metrics.filter(is_deleted=False).order_by("order")
             ]
@@ -271,7 +271,8 @@ class Testimonial(models.Model):
         return {
             "author": self.author,
             "role": self.role,
-            "content": self.content
+            "content": self.content,
+            "rating": self.rating
         }
     
 

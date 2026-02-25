@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework import serializers # type: ignore
 from apps.showcase.models.home import HeroSection
 
 

@@ -3,8 +3,8 @@ from apps.showcase.models import (
     HeroSection,
     BenefitsSection,
     Benefit,
-    ServiceSection,
-    Service,
+    ProductSection,
+    Product,
     HowItWorksSection,
     HowItWorksStep,
     AboutSection,
@@ -46,18 +46,18 @@ class BenefitSectionAdmin(admin.ModelAdmin):
     inlines = [BenefitInline]
     
     
-class ServiceInline(admin.TabularInline):
-    model = Service
+class ProductInline(admin.TabularInline):
+    model = Product
     extra = 2
     ordering = ("order",)
-    
 
-@admin.register(ServiceSection)
-class ServiceSectionAdmin(admin.ModelAdmin):
+
+@admin.register(ProductSection)
+class ProductSectionAdmin(admin.ModelAdmin):
     list_display = ("id", "website", "title", "is_active", "is_deleted", "order")
     list_editable = ("is_active", "is_deleted")
     list_filter = ("website", "is_active", "is_deleted")
-    inlines = [ServiceInline]
+    inlines = [ProductInline]
     
     
 class HowItWorksStepInline(admin.TabularInline):
