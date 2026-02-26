@@ -12,8 +12,9 @@ from .controllers.admin.home.testimonials import (
     HomeTestimonialsAdminDetailView,
 )
 from .controllers.admin.home.cta import HomeCTAAdminView, HomeCTAAdminDetailView
-
-
+from .controllers.about_view import AboutView
+from .controllers.admin.about.intro import AboutIntroAdminView, AboutIntroAdminDetailView
+from .controllers.admin.about.history import AboutHistoryAdminView, AboutHistoryAdminDetailView
 app_name = "cms"
 
 urlpatterns = [
@@ -53,15 +54,15 @@ urlpatterns = [
     path('admin/home/cta/<int:id>', HomeCTAAdminDetailView.as_view(), name="admin-home-cta-detail"),
     
     # Público
-    # path('about', AboutView.as_view(), name="about-page"),
+    path('about', AboutView.as_view(), name="about-page"),
 
     # # Admin - Intro
-    # path('admin/about/intro', AboutIntroAdminView.as_view(), name="admin-about-intro"),
-    # path('admin/about/intro/<int:id>', AboutIntroAdminDetailView.as_view(), name="admin-about-intro-detail"),
+    path('admin/about/intro', AboutIntroAdminView.as_view(), name="admin-about-intro"),
+    path('admin/about/intro/<int:id>', AboutIntroAdminDetailView.as_view(), name="admin-about-intro-detail"),
 
-    # # Admin - History
-    # path('admin/about/history', AboutHistoryAdminView.as_view(), name="admin-about-history"),
-    # path('admin/about/history/<int:id>', AboutHistoryAdminDetailView.as_view(), name="admin-about-history-detail"),
+    # Admin - History
+    path('admin/about/history', AboutHistoryAdminView.as_view(), name="admin-about-history"),
+    path('admin/about/history/<int:id>', AboutHistoryAdminDetailView.as_view(), name="admin-about-history-detail"),
 
     # # Admin - Vision
     # path('admin/about/vision', AboutVisionAdminView.as_view(), name="admin-about-vision"),

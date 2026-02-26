@@ -13,3 +13,14 @@ from .home import (
     Testimonial,
     TestimonialSection,
 )
+
+from .about import (
+    AboutIntroSection,
+    AboutHistorySection,
+    AboutVisionSection,
+    AboutDifferentiatorsSection,
+    AboutTeamSection,
+    AboutDifferentiator,
+    AboutVisionItem,
+    AboutTeamMember,
+)
