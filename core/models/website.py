@@ -37,7 +37,7 @@ class HeaderLinks(models.Model):
     
     website = models.ForeignKey(Website, on_delete=models.CASCADE, related_name="header_links")
     type = models.CharField(max_length=25, choices=HEADER_LINKS_CHOICES)
-    is_Active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
     
     order = models.PositiveIntegerField(default=0)
     
@@ -45,5 +45,5 @@ class HeaderLinks(models.Model):
     def to_dict(self):
         return {
             "link": self.type,
-            "is_active": self.is_Active
+            "is_active": self.is_active,
         }

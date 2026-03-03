@@ -3,6 +3,8 @@ from apps.showcase.models.about import AboutVisionSection, AboutVisionItem
 
 
 class AboutVisionItemSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False, allow_null=True)
+
     class Meta:
         model = AboutVisionItem
         fields = [

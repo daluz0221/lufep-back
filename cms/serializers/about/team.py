@@ -3,6 +3,8 @@ from apps.showcase.models.about import AboutTeamSection, AboutTeamMember
 
 
 class AboutTeamMemberSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False, allow_null=True)
+
     class Meta:
         model = AboutTeamMember
         fields = [

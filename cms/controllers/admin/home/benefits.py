@@ -1,6 +1,6 @@
-from django.http import JsonResponse
-from rest_framework import status
-from rest_framework.response import Response
+from django.http import JsonResponse  # type: ignore
+from rest_framework import status #type: ignore
+from rest_framework.response import Response #type: ignore
 
 
 from core.views import AdminView

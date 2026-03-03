@@ -3,6 +3,8 @@ from apps.showcase.models.about import AboutDifferentiatorsSection, AboutDiffere
 
 
 class AboutDifferentiatorSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False, allow_null=True)
+
     class Meta:
         model = AboutDifferentiator
         fields = [

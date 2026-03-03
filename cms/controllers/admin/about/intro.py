@@ -1,13 +1,14 @@
-from rest_framework.views import APIView # type: ignore
-from rest_framework.response import Response # type: ignore
+from rest_framework.response import Response  # type: ignore
 from rest_framework import status # type: ignore
+
+from core.views import AdminView
 
 from ....serializers.about.intro import AboutIntroSectionSerializer
 from ....services.sections.about.intro import IntroService
 
 
 
-class AboutIntroAdminView(APIView):
+class AboutIntroAdminView(AdminView):
     
     
     def post(self, request):
@@ -26,7 +27,7 @@ class AboutIntroAdminView(APIView):
         return Response(data, status=status.HTTP_200_OK)
     
     
-class AboutIntroAdminDetailView(APIView):
+class AboutIntroAdminDetailView(AdminView):
     
     def get(self, request, id):
         website = request.context.get("website")

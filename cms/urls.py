@@ -15,6 +15,31 @@ from .controllers.admin.home.cta import HomeCTAAdminView, HomeCTAAdminDetailView
 from .controllers.about_view import AboutView
 from .controllers.admin.about.intro import AboutIntroAdminView, AboutIntroAdminDetailView
 from .controllers.admin.about.history import AboutHistoryAdminView, AboutHistoryAdminDetailView
+from .controllers.admin.about.vision import AboutVisionAdminView, AboutVisionAdminDetailView
+from .controllers.admin.about.differentiators import (
+    AboutDifferentiatorsAdminView,
+    AboutDifferentiatorsAdminDetailView,
+)
+from .controllers.admin.about.team import AboutTeamAdminView, AboutTeamAdminDetailView
+from .controllers.products_views import ProductsView
+from .controllers.admin.products.intro import (
+    ProductsIntroAdminView,
+    ProductsIntroAdminDetailView,
+)
+from .controllers.admin.products.items import (
+    ProductsItemsAdminView,
+    ProductsItemsAdminDetailView,
+)
+from .controllers.contact_view import ContactView
+from .controllers.admin.contact.form import (
+    ContactFormAdminView,
+    ContactFormAdminDetailView,
+)
+from .controllers.admin.contact.info import (
+    ContactInfoAdminView,
+    ContactInfoAdminDetailView,
+)
+
 app_name = "cms"
 
 urlpatterns = [
@@ -65,14 +90,68 @@ urlpatterns = [
     path('admin/about/history/<int:id>', AboutHistoryAdminDetailView.as_view(), name="admin-about-history-detail"),
 
     # # Admin - Vision
-    # path('admin/about/vision', AboutVisionAdminView.as_view(), name="admin-about-vision"),
-    # path('admin/about/vision/<int:id>', AboutVisionAdminDetailView.as_view(), name="admin-about-vision-detail"),
+    path('admin/about/vision', AboutVisionAdminView.as_view(), name="admin-about-vision"),
+    path('admin/about/vision/<int:id>', AboutVisionAdminDetailView.as_view(), name="admin-about-vision-detail"),
 
-    # # Admin - Differentiators
-    # path('admin/about/differentiators', AboutDifferentiatorsAdminView.as_view(), name="admin-about-differentiators"),
-    # path('admin/about/differentiators/<int:id>', AboutDifferentiatorsAdminDetailView.as_view(), name="admin-about-differentiators-detail"),
+    # Admin - Differentiators
+    path('admin/about/differentiators', AboutDifferentiatorsAdminView.as_view(), name="admin-about-differentiators"),
+    path('admin/about/differentiators/<int:id>', AboutDifferentiatorsAdminDetailView.as_view(), name="admin-about-differentiators-detail"),
 
-    # # Admin - Team
-    # path('admin/about/team', AboutTeamAdminView.as_view(), name="admin-about-team"),
-    # path('admin/about/team/<int:id>', AboutTeamAdminDetailView.as_view(), name="admin-about-team-detail"),
+    # Admin - Team
+    path('admin/about/team', AboutTeamAdminView.as_view(), name="admin-about-team"),
+    path('admin/about/team/<int:id>', AboutTeamAdminDetailView.as_view(), name="admin-about-team-detail"),
+    
+    # Products - público
+    path('products', ProductsView.as_view(), name="products-page"),
+
+    # Admin - Products Intro
+    path(
+        'admin/products/intro',
+        ProductsIntroAdminView.as_view(),
+        name="admin-products-intro",
+    ),
+    path(
+        'admin/products/intro/<int:id>',
+        ProductsIntroAdminDetailView.as_view(),
+        name="admin-products-intro-detail",
+    ),
+
+    # Admin - Products Items
+    path(
+        'admin/products/items',
+        ProductsItemsAdminView.as_view(),
+        name="admin-products-items",
+    ),
+    path(
+        'admin/products/items/<int:id>',
+        ProductsItemsAdminDetailView.as_view(),
+        name="admin-products-items-detail",
+    ),
+
+    # Contact - público
+    path('contact', ContactView.as_view(), name="contact-page"),
+
+    # Admin - Contact Form
+    path(
+        'admin/contact/form',
+        ContactFormAdminView.as_view(),
+        name="admin-contact-form",
+    ),
+    path(
+        'admin/contact/form/<int:id>',
+        ContactFormAdminDetailView.as_view(),
+        name="admin-contact-form-detail",
+    ),
+
+    # Admin - Contact Info
+    path(
+        'admin/contact/info',
+        ContactInfoAdminView.as_view(),
+        name="admin-contact-info",
+    ),
+    path(
+        'admin/contact/info/<int:id>',
+        ContactInfoAdminDetailView.as_view(),
+        name="admin-contact-info-detail",
+    ),
 ]

@@ -1,4 +1,5 @@
 from django.db import transaction  # type: ignore
+from django.db.models import Prefetch  # type: ignore
 from apps.showcase.models import AboutSection, AboutMetric
 from ....serializers.home.about import AboutSectionSerializer
 
@@ -12,7 +13,14 @@ class AboutService:
                 is_active=True,
                 is_deleted=False
             )
-            .prefetch_related("metrics")
+            .prefetch_related(
+                Prefetch(
+                    "metrics",
+                    queryset=AboutMetric.objects.filter(
+                        is_deleted=False
+                    ).order_by("order"),
+                )
+            )
             .first()
         )
         return section.to_dict() if section else None
@@ -21,15 +29,27 @@ class AboutService:
     def get_for_admin(website):
         sections = AboutSection.objects.filter(
             website=website, is_deleted=False
-        ).prefetch_related("metrics")
+        ).prefetch_related(
+            Prefetch(
+                "metrics",
+                queryset=AboutMetric.objects.filter(
+                    is_deleted=False
+                ).order_by("order"),
+            )
+        )
         return {"aboutSections": [section.to_dict() for section in sections]}
 
     @staticmethod
     def get_by_id(website, id):
         try:
-            section = AboutSection.objects.get(
-                website=website, id=id, is_deleted=False
-            )
+            section = AboutSection.objects.prefetch_related(
+                Prefetch(
+                    "metrics",
+                    queryset=AboutMetric.objects.filter(
+                        is_deleted=False
+                    ).order_by("order"),
+                )
+            ).get(website=website, id=id, is_deleted=False)
             return AboutSectionSerializer(section).data
         except AboutSection.DoesNotExist:
             raise Exception(f"Sección with id {id} not found")
@@ -69,6 +89,14 @@ class AboutService:
                     setattr(section_to_update, attr, value)
                 section_to_update.save()
                 if metrics_data is None:
+                    section_to_update = AboutSection.objects.prefetch_related(
+                        Prefetch(
+                            "metrics",
+                            queryset=AboutMetric.objects.filter(
+                                is_deleted=False
+                            ).order_by("order"),
+                        )
+                    ).get(pk=section_to_update.pk)
                     return section_to_update
 
                 existing_metrics = {
@@ -94,6 +122,14 @@ class AboutService:
                     section=section_to_update
                 ).exclude(id__in=sent_ids).update(is_deleted=True)
 
+                section_to_update = AboutSection.objects.prefetch_related(
+                    Prefetch(
+                        "metrics",
+                        queryset=AboutMetric.objects.filter(
+                            is_deleted=False
+                        ).order_by("order"),
+                    )
+                ).get(pk=section_to_update.pk)
                 return section_to_update
         except AboutSection.DoesNotExist:
             raise Exception(f"Sección with id {id} not found")

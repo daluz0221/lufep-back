@@ -1,12 +1,13 @@
-from rest_framework.views import APIView  # type: ignore
 from rest_framework.response import Response  # type: ignore
 from rest_framework import status  # type: ignore
+
+from core.views import AdminView
 
 from ....serializers.about.history import AboutHistorySectionSerializer
 from ....services.sections.about.history import HistoryService
 
 
-class AboutHistoryAdminView(APIView):
+class AboutHistoryAdminView(AdminView):
 
     def post(self, request):
         website = request.context.get("website")
@@ -27,7 +28,7 @@ class AboutHistoryAdminView(APIView):
         return Response(data, status=status.HTTP_200_OK)
 
 
-class AboutHistoryAdminDetailView(APIView):
+class AboutHistoryAdminDetailView(AdminView):
 
     def get(self, request, id):
         website = request.context.get("website")

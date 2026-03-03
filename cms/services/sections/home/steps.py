@@ -1,4 +1,5 @@
-from django.db import transaction #type: ignore
+from django.db import transaction  # type: ignore
+from django.db.models import Prefetch  # type: ignore
 from apps.showcase.models import HowItWorksSection, HowItWorksStep
 from ....serializers.home.how_it_works import HowItWorksSectionSerializer, HowItWorksStepSerializer
 
@@ -15,22 +16,43 @@ class StepsService:
                 is_active=True,
                 is_deleted=False
             )
-            .prefetch_related("steps")
+            .prefetch_related(
+                Prefetch(
+                    "steps",
+                    queryset=HowItWorksStep.objects.filter(
+                        is_deleted=False
+                    ).order_by("order"),
+                )
+            )
             .first()
         )
-        
         return section.to_dict() if section else None
-    
-    
+
     @staticmethod
     def get_for_admin(website):
-        sections = HowItWorksSection.objects.filter(website=website, is_deleted=False).prefetch_related("steps")
+        sections = HowItWorksSection.objects.filter(
+            website=website, is_deleted=False
+        ).prefetch_related(
+            Prefetch(
+                "steps",
+                queryset=HowItWorksStep.objects.filter(
+                    is_deleted=False
+                ).order_by("order"),
+            )
+        )
         return { "howItWorksSections": [section.to_dict() for section in sections] }
     
     @staticmethod
     def get_by_id(website, id):
         try:
-            section = HowItWorksSection.objects.get(website=website, id=id, is_deleted=False)
+            section = HowItWorksSection.objects.prefetch_related(
+                Prefetch(
+                    "steps",
+                    queryset=HowItWorksStep.objects.filter(
+                        is_deleted=False
+                    ).order_by("order"),
+                )
+            ).get(website=website, id=id, is_deleted=False)
             return HowItWorksSectionSerializer(section).data
         except HowItWorksSection.DoesNotExist:
             raise Exception(f"Sección with id {id} not found")
@@ -66,8 +88,16 @@ class StepsService:
                     setattr(section_to_update, attr, value)
                 section_to_update.save()
                 if steps_data is None:
+                    section_to_update = HowItWorksSection.objects.prefetch_related(
+                        Prefetch(
+                            "steps",
+                            queryset=HowItWorksStep.objects.filter(
+                                is_deleted=False
+                            ).order_by("order"),
+                        )
+                    ).get(pk=section_to_update.pk)
                     return section_to_update
-                
+
                 existing_steps = {step.pk: step for step in section_to_update.steps.filter(is_deleted=False)}
                 sent_ids = []
                 for step_data in steps_data:
@@ -90,7 +120,15 @@ class StepsService:
                 HowItWorksStep.objects.filter(
                     section=section_to_update
                 ).exclude(id__in=sent_ids).update(is_deleted=True)
-                
+
+                section_to_update = HowItWorksSection.objects.prefetch_related(
+                    Prefetch(
+                        "steps",
+                        queryset=HowItWorksStep.objects.filter(
+                            is_deleted=False
+                        ).order_by("order"),
+                    )
+                ).get(pk=section_to_update.pk)
                 return section_to_update
         except HowItWorksSection.DoesNotExist:
             raise Exception(f"Sección with id {id} not found")

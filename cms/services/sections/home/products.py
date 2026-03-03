@@ -1,4 +1,5 @@
 from django.db import transaction  # type: ignore
+from django.db.models import Prefetch  # type: ignore
 
 from apps.showcase.models import ProductSection, Product
 
@@ -15,7 +16,14 @@ class ProductSectionService:
                 is_active=True,
                 is_deleted=False
             )
-            .prefetch_related("products")
+            .prefetch_related(
+                Prefetch(
+                    "products",
+                    queryset=Product.objects.filter(
+                        is_deleted=False
+                    ).order_by("order"),
+                )
+            )
             .first()
         )
         return section.to_dict() if section else None
@@ -24,15 +32,27 @@ class ProductSectionService:
     def get_for_admin(website):
         sections = ProductSection.objects.filter(
             website=website, is_deleted=False
-        ).prefetch_related("products")
+        ).prefetch_related(
+            Prefetch(
+                "products",
+                queryset=Product.objects.filter(
+                    is_deleted=False
+                ).order_by("order"),
+            )
+        )
         return {"productSections": [section.to_dict() for section in sections]}
 
     @staticmethod
     def get_by_id(website, id):
         try:
-            section = ProductSection.objects.get(
-                website=website, id=id, is_deleted=False
-            )
+            section = ProductSection.objects.prefetch_related(
+                Prefetch(
+                    "products",
+                    queryset=Product.objects.filter(
+                        is_deleted=False
+                    ).order_by("order"),
+                )
+            ).get(website=website, id=id, is_deleted=False)
             return ProductSectionSerializer(section).data
         except ProductSection.DoesNotExist:
             raise Exception(f"Sección with id {id} not found")
@@ -72,6 +92,14 @@ class ProductSectionService:
                     setattr(section_to_update, attr, value)
                 section_to_update.save()
                 if products_data is None:
+                    section_to_update = ProductSection.objects.prefetch_related(
+                        Prefetch(
+                            "products",
+                            queryset=Product.objects.filter(
+                                is_deleted=False
+                            ).order_by("order"),
+                        )
+                    ).get(pk=section_to_update.pk)
                     return section_to_update
 
                 existing_products = {
@@ -97,6 +125,14 @@ class ProductSectionService:
                     section=section_to_update
                 ).exclude(id__in=sent_ids).update(is_deleted=True)
 
+                section_to_update = ProductSection.objects.prefetch_related(
+                    Prefetch(
+                        "products",
+                        queryset=Product.objects.filter(
+                            is_deleted=False
+                        ).order_by("order"),
+                    )
+                ).get(pk=section_to_update.pk)
                 return section_to_update
         except ProductSection.DoesNotExist:
             raise Exception(f"Sección with id {id} not found")

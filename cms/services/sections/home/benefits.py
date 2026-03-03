@@ -1,4 +1,5 @@
-from django.db import transaction #type: ignore
+from django.db import transaction  # type: ignore
+from django.db.models import Prefetch  # type: ignore
 
 from apps.showcase.models import BenefitsSection, Benefit
 from ....serializers.home.benefits import BenefitsSectionSerializer
@@ -15,16 +16,30 @@ class BenefitsService:
                 is_active=True,
                 is_deleted=False
             )
-            .prefetch_related("benefits")
+            .prefetch_related(
+                Prefetch(
+                    "benefits",
+                    queryset=Benefit.objects.filter(
+                        is_deleted=False
+                    ).order_by("order"),
+                )
+            )
             .first()
         )
-        
         return section.to_dict() if section else None
-    
+
     @staticmethod
     def get_for_admin(website):
-        
-        sections = BenefitsSection.objects.filter(website=website, is_deleted=False).prefetch_related("benefits")
+        sections = BenefitsSection.objects.filter(
+            website=website, is_deleted=False
+        ).prefetch_related(
+            Prefetch(
+                "benefits",
+                queryset=Benefit.objects.filter(
+                    is_deleted=False
+                ).order_by("order"),
+            )
+        )
         
         return { "benefitsSections": [section.to_dict() for section in sections] }
 
@@ -51,7 +66,14 @@ class BenefitsService:
     @staticmethod
     def get_by_id(website, benefit_id):
         try:
-            section = BenefitsSection.objects.get(website=website, id=benefit_id, is_deleted=False)
+            section = BenefitsSection.objects.prefetch_related(
+                Prefetch(
+                    "benefits",
+                    queryset=Benefit.objects.filter(
+                        is_deleted=False
+                    ).order_by("order"),
+                )
+            ).get(website=website, id=benefit_id, is_deleted=False)
             return BenefitsSectionSerializer(section).data
         except BenefitsSection.DoesNotExist:
             raise Exception(f"Sección with id {benefit_id} not found")
@@ -84,9 +106,16 @@ class BenefitsService:
                 section_to_update.save()
                 
                 if benefits_data is None:
+                    section_to_update = BenefitsSection.objects.prefetch_related(
+                        Prefetch(
+                            "benefits",
+                            queryset=Benefit.objects.filter(
+                                is_deleted=False
+                            ).order_by("order"),
+                        )
+                    ).get(pk=section_to_update.pk)
                     return section_to_update
-                
-                
+
                 existing_benefits = {benefit.pk: benefit for benefit in section_to_update.benefits.filter(is_deleted=False)}
           
                 sent_ids = []
@@ -117,12 +146,17 @@ class BenefitsService:
                 Benefit.objects.filter(
                     section=section_to_update
                 ).exclude(id__in=sent_ids).update(is_deleted=True)
-                
-                        
+
+                section_to_update = BenefitsSection.objects.prefetch_related(
+                    Prefetch(
+                        "benefits",
+                        queryset=Benefit.objects.filter(
+                            is_deleted=False
+                        ).order_by("order"),
+                    )
+                ).get(pk=section_to_update.pk)
                 return section_to_update
-            
-            
-            
+
         except BenefitsSection.DoesNotExist:
          
             raise Exception( f"Hero with ud {id} not found")

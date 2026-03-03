@@ -20,6 +20,13 @@ from apps.showcase.models import (
     AboutTeamSection,
     AboutVisionItem,
     AboutTeamMember,
+    ProductsIntroSection,
+    ProductsItem,
+    ProductsItemInclude,
+    ContactFormSection,
+    ContactFormSubjectOption,
+    ContactInfoSection,
+    ContactScheduleField,
 )
 
 
@@ -181,3 +188,68 @@ class AboutTeamSectionAdmin(admin.ModelAdmin):
     list_editable = ("is_active", "is_deleted")
     list_filter = ("website", "is_active", "is_deleted")
     inlines = [AboutTeamMemberInline]
+    
+    
+    
+# Products
+
+# Intro
+@admin.register(ProductsIntroSection)
+class ProductsIntroSectionAdmin(admin.ModelAdmin):
+    list_display = ("id", "website", "title", "is_active", "is_deleted", "order")
+    list_editable = ("is_active", "is_deleted")
+    list_filter = ("website", "is_active", "is_deleted")
+
+# Products
+class ProductsItemIncludeInline(admin.TabularInline):
+    model = ProductsItemInclude
+    extra = 1
+    ordering = ("order",)
+    
+@admin.register(ProductsItem)
+class ProductsItemAdmin(admin.ModelAdmin):
+    list_display = ("id", "website", "title", "is_active", "is_deleted", "order")
+    list_editable = ("is_active", "is_deleted")
+    list_filter = ("website", "is_active", "is_deleted")
+    inlines = [ProductsItemIncludeInline]
+
+
+# Contact
+
+# Form
+class ContactFormSubjectOptionInline(admin.TabularInline):
+    model = ContactFormSubjectOption
+    extra = 1
+    ordering = ("order",)
+
+
+@admin.register(ContactFormSection)
+class ContactFormSectionAdmin(admin.ModelAdmin):
+    list_display = ("id", "website", "title", "is_active", "is_deleted", "order")
+    list_editable = ("is_active", "is_deleted")
+    list_filter = ("website", "is_active", "is_deleted")
+    inlines = [ContactFormSubjectOptionInline]
+
+
+# Info
+class ContactScheduleFieldInline(admin.TabularInline):
+    model = ContactScheduleField
+    extra = 1
+    ordering = ("order",)
+
+
+@admin.register(ContactInfoSection)
+class ContactInfoSectionAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "website",
+        "phone",
+        "email",
+        "map_text",
+        "is_active",
+        "is_deleted",
+        "order",
+    )
+    list_editable = ("is_active", "is_deleted")
+    list_filter = ("website", "is_active", "is_deleted")
+    inlines = [ContactScheduleFieldInline]

@@ -3,7 +3,7 @@ from apps.showcase.models.home import HowItWorksSection, HowItWorksStep
 
 
 class HowItWorksStepSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(required=False)
+    id = serializers.IntegerField(required=False, allow_null=True)
 
     class Meta:
         model = HowItWorksStep

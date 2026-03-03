@@ -7,7 +7,7 @@ from apps.showcase.models.home import (
 
 
 class TestimonialSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(required=False)
+    id = serializers.IntegerField(required=False, allow_null=True)
 
     class Meta:
         model = Testimonial
@@ -22,7 +22,7 @@ class TestimonialSerializer(serializers.ModelSerializer):
 
 
 class TertimonialMetricSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(required=False)
+    id = serializers.IntegerField(required=False, allow_null=True)
 
     class Meta:
         model = TertimonialMetric
