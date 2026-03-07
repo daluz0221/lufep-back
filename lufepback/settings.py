@@ -161,7 +161,8 @@ else:
     CORS_ALLOWED_ORIGINS = [
     ]
 
-# Permitir que Angular envíe el Header de Authorization
+# Permitir que Angular envíe el Header de Authorization y cookies
+CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
     "accept",
     "authorization",
@@ -171,8 +172,14 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 
+# Cookie HttpOnly para el refresh token (nombre y max_age en segundos)
+REFRESH_TOKEN_COOKIE_NAME = "refresh_token"
+REFRESH_TOKEN_LIFETIME = timedelta(days=7)
+REFRESH_TOKEN_COOKIE_MAX_AGE = int(REFRESH_TOKEN_LIFETIME.total_seconds())
+REFRESH_TOKEN_COOKIE_PATH = "/api/v1/auth/"
+
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),  # 1 día para facilitar conexión front-back
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "REFRESH_TOKEN_LIFETIME": REFRESH_TOKEN_LIFETIME,
     "ROTATE_REFRESH_TOKENS": False,
 }
