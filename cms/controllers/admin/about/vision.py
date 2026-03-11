@@ -37,7 +37,7 @@ class AboutVisionAdminDetailView(AdminView):
         website = request.context.get("website")
         try:
             section = VisionService.get_by_id(website, id)
-            return Response(section, status=status.HTTP_302_FOUND)
+            return Response(section, status=status.HTTP_200_OK)
         except Exception:
             return Response({}, status=status.HTTP_404_NOT_FOUND)
         
@@ -49,7 +49,7 @@ class AboutVisionAdminDetailView(AdminView):
             
             try:
                 section = VisionService.update_section(website, id, serializer.validated_data)
-                return Response(AboutVisionSectionSerializer(section).data, status=status.HTTP_302_FOUND)
+                return Response(AboutVisionSectionSerializer(section).data, status=status.HTTP_200_OK)
             except Exception:
                 return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
             

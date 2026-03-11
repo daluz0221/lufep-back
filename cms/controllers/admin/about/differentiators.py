@@ -33,7 +33,7 @@ class AboutDifferentiatorsAdminDetailView(AdminView):
         website = request.context.get("website")
         try:
             section = DiferenciatorService.get_by_id(website, id)
-            return Response(section, status=status.HTTP_302_FOUND)
+            return Response(section, status=status.HTTP_200_OK)
         except Exception:
             return Response({}, status=status.HTTP_404_NOT_FOUND)
 
@@ -50,7 +50,7 @@ class AboutDifferentiatorsAdminDetailView(AdminView):
                 )
                 return Response(
                     AboutDifferentiatorsSectionSerializer(section).data,
-                    status=status.HTTP_302_FOUND,
+                    status=status.HTTP_200_OK,
                 )
             except Exception:
                 return Response(

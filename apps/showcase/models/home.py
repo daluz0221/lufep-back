@@ -41,7 +41,8 @@ class HeroSection(BaseSection):
             "imageUrl": self.imageUrl,
             "imageAlt": self.imageAlt,
             "textCta": self.textCta,
-            "urlCta": self.urlCta
+            "urlCta": self.urlCta,
+            "isActive": self.is_active
         }
         
     class Meta(BaseSection.Meta):

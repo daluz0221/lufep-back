@@ -32,7 +32,7 @@ class HomeHowItWorksAdminDetailView(AdminView):
         website = request.context.get("website")
         try:
             data = StepsService.get_by_id(website, id)
-            return Response(data, status=status.HTTP_302_FOUND)
+            return Response(data, status=status.HTTP_200_OK)
         except Exception:
             return Response({}, status=status.HTTP_404_NOT_FOUND)
     
@@ -44,7 +44,7 @@ class HomeHowItWorksAdminDetailView(AdminView):
         if serializer.is_valid():
             try:
                 update_section = StepsService.update_section(website, id, serializer.validated_data)
-                return Response(HowItWorksSectionSerializer(update_section).data, status=status.HTTP_302_FOUND)
+                return Response(HowItWorksSectionSerializer(update_section).data, status=status.HTTP_200_OK)
             except Exception:
                 return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

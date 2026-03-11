@@ -9,6 +9,10 @@ class HeroSectionSerializer(serializers.ModelSerializer):
         allow_blank=True,
         required=False
     )
+    isActive = serializers.BooleanField(
+        source="is_active",
+        required=False
+    )
     
     class Meta:
         model = HeroSection
@@ -17,7 +21,7 @@ class HeroSectionSerializer(serializers.ModelSerializer):
             "headline",
             "highlightWord",
             "subheadline",
-            "is_active",
+            "isActive",
             "imageUrl",
             "imageAlt",
             "textCta",

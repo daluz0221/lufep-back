@@ -49,7 +49,7 @@ class HomeHeroAdminDetailView(AdminView):
         if payload.is_valid():
             try:
                 updated_hero = HeroService.update_hero(website, hero_id, payload.validated_data)
-                return Response(HeroSectionSerializer(updated_hero).data, status=status.HTTP_302_FOUND)
+                return Response(HeroSectionSerializer(updated_hero).data, status=status.HTTP_200_OK)
             except HeroNotFound:
                 return Response(payload.errors, status=status.HTTP_404_NOT_FOUND)
         return Response(payload.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -61,7 +61,7 @@ class HomeHeroAdminDetailView(AdminView):
         
         try:
             hero = HeroService.get_by_id(website=website, hero_id=hero_id)
-            return Response(hero, status=status.HTTP_302_FOUND)
+            return Response(hero, status=status.HTTP_200_OK)
         except HeroNotFound:
             return Response({}, status=status.HTTP_404_NOT_FOUND)
         
